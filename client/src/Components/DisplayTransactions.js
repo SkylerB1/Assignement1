@@ -1,24 +1,37 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useRef } from "react";
 import "./DisplayTransactions.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
 function DisplayTransactions() {
   const [data, setData] = useState([]);
-  const [balance, setBalance] = useState(0);
+  const balance = useRef(0);
 
   const displayData = async () => {
     const resp = await axios.get("http://localhost:5000/api/get");
     setData(resp.data);
   };
 
+  const handleBalance = (amount, type) => {
+    if (type === "credit") {
+      balance.current += amount;
+    } else {
+      balance.current -= amount;
+    }
+
+    return <td>{balance.current}</td>;
+  };
+
   useEffect(() => {
     displayData();
   }, []);
-
+  const convertDate = (date) => {
+    let d = new Date(date);
+    return d.toLocaleDateString();
+  };
   return (
-    <div className="table">
-      <table className="styled-table">
+    <div className="container">
+      <table className="table table-boadered">
         <thead>
           <tr>
             <th>Office Tranactions</th>
@@ -27,7 +40,7 @@ function DisplayTransactions() {
             <th></th>
             <th>
               <Link to="/NewTransactions">
-                <button>Add Tranactions</button>
+                <button className="btn btn-light">Add Tranactions</button>
               </Link>
             </th>
           </tr>
@@ -43,7 +56,7 @@ function DisplayTransactions() {
           {data.map((item, index) => {
             return (
               <tr key={item.id}>
-                <td>{item.date}</td>
+                <td>{convertDate(item.date)}</td>
                 <td>{item.description}</td>
                 {item.transaction_type === "credit" ? (
                   <td>{item.amount}</td>
@@ -55,10 +68,7 @@ function DisplayTransactions() {
                 ) : (
                   <td></td>
                 )}
-                {item.transaction_type === "credit"
-                  ? () => setBalance((balance) => balance + item.amount)
-                  : () => setBalance((balance) => balance - item.amount)}
-                <td>{balance}</td>
+                {handleBalance(item.amount, item.transaction_type)}
               </tr>
             );
           })}

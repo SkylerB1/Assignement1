@@ -1,0 +1,37 @@
+* {
+  box-sizing: border-box;
+}
+input,
+select,
+textarea {
+  border: none;
+  border-bottom: 1px solid black;
+  padding: 8px;
+  width: 100%;
+  resize: vertical;
+  background-color: transparent;
+}
+
+label {
+  display: inline-block;
+}
+
+button {
+  margin-right: 20px;
+  float: right;
+}
+
+.container {
+  margin-top: 10%;
+  width: 50%;
+}
+.label {
+  float: left;
+}
+.margin {
+  margin: 3%;
+  padding: 10px;
+}
+.input {
+  margin-top: 6%;
+}

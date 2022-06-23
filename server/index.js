@@ -24,7 +24,7 @@ const db = mysql.createPool({
 // });
 
 app.get("/api/get", (req, res) => {
-  const sqlGet = "SELECT * FROM Transactions";
+  const sqlGet = "SELECT * from Transactions";
   db.query(sqlGet, (err, result) => {
     res.send(result);
   });
@@ -33,7 +33,7 @@ app.get("/api/get", (req, res) => {
 app.post("/api/post", (req, res) => {
   const { transaction_type, amount, description } = req.body;
   const sqlInsert =
-    "INSERT INTO Transactions (transaction_type,amount,description,date) VALUES (?,?,?,now())";
+    "INSERT INTO Transactions (transaction_type,amount,description,date) VALUES (?,?,?,curdate())";
   db.query(
     sqlInsert,
     [transaction_type, amount, description],

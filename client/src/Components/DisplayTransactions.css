@@ -1,15 +1,5 @@
-.styled-table {
-  border-collapse: collapse;
-  width: 50%;
-
-  overflow: scroll;
-}
-.styled-table th,
-.styled-table td {
+.table,
+th,
+td {
   border: 1px solid black;
-  padding: 10px;
-}
-.table {
-  margin: auto;
-  width: 50%;
 }

@@ -1,36 +1,24 @@
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useEffect } from "react";
 import "./DisplayTransactions.css";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { getAllTransactions } from "../GraphQL/Queries";
+import { useQuery } from "@apollo/client";
 
-function DisplayTransactions() {
-  const [data, setData] = useState([]);
-  const balance = useRef(0);
-
-  const displayData = async () => {
-    const resp = await axios.get("http://localhost:5000/api/get");
-    setData(resp.data);
-  };
-
-  const handleBalance = (amount, type) => {
-    if (type === "credit") {
-      balance.current += amount;
-    } else {
-      balance.current -= amount;
-    }
-
-    return <td>{balance.current}</td>;
-  };
+const DisplayTransactions = () => {
+  const [getData, setData] = useState([]);
+  const { data, refetch } = useQuery(getAllTransactions);
 
   useEffect(() => {
-    displayData();
-  }, []);
-  const convertDate = (date) => {
-    let d = new Date(date);
-    return d.toLocaleDateString();
-  };
+    refetch();
+    if (data) {
+      setData(data.AllTransactions);
+      // eslint-disable-next-line
+    }
+  }, [data]);
+
   return (
     <div className="container">
+      <h1>GraphQL</h1>
       <table className="table table-boadered">
         <thead>
           <tr>
@@ -53,11 +41,11 @@ function DisplayTransactions() {
           </tr>
         </thead>
         <tbody>
-          {data.map((item, index) => {
+          {getData.map((item, index) => {
             return (
-              <tr key={item.id}>
-                <td>{convertDate(item.date)}</td>
-                <td>{item.description}</td>
+              <tr key={index}>
+                <td key={item.id}>{item.date}</td>
+                <td>{item.descriptions}</td>
                 {item.transaction_type === "credit" ? (
                   <td>{item.amount}</td>
                 ) : (
@@ -68,7 +56,7 @@ function DisplayTransactions() {
                 ) : (
                   <td></td>
                 )}
-                {handleBalance(item.amount, item.transaction_type)}
+                <td>{item.running_balance}</td>
               </tr>
             );
           })}
@@ -76,6 +64,6 @@ function DisplayTransactions() {
       </table>
     </div>
   );
-}
+};
 
 export default DisplayTransactions;
